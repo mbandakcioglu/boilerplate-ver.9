@@ -1,0 +1,15 @@
+//- variables
+block variables
+
+doctype html
+html(lang="tr")
+	head
+		link(rel="stylesheet" href="/src/styles/app.css")
+		script(type='module' src="/src/scripts/app.js")
+		include ../includes/head
+	body.theme-light
+		include  ../includes/header
+	main.main.m-auto(class="solutions w-full max-w-1/3")
+		block content
+		include ../includes/footer
+

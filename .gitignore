@@ -1,0 +1,8 @@
+# Derlenmiş/Paketlenmiş Çıktılar
+dist/
+
+# Node.js Bağımlılıkları
+node_modules/
+
+# Sadece Kök Dizindeki .zip Dosyaları
+/*.zip
