@@ -17,7 +17,7 @@ import tailwindcss from "@tailwindcss/vite";
 // Proje ayarları
 const projectSetup = {
 	projectName: "my-theme", // WordPress tema adı veya HTML projesi adı
-	projectType: "html", // "html" veya "wordpress"
+	projectType: "wordpress", // "html" veya "wordpress"
 };
 
 const assetsPath =
