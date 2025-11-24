@@ -1,0 +1,66 @@
+document.addEventListener('DOMContentLoaded', function() {
+	const itemsPerPage = 3;
+  
+	const containerSelector = '#testimonials';
+	const itemSelector = '.elementor-element';
+  
+	const pagerContainerSelector = '#testimonials';
+	const pagerClassName = 'custom-pager';
+  
+	const container = document.querySelector(containerSelector);
+	if (!container) return;
+  
+	const allItems = Array.from(container.querySelectorAll(itemSelector));
+	if (allItems.length <= itemsPerPage) {
+		return;
+	}
+  
+	const totalPages = Math.ceil(allItems.length / itemsPerPage);
+  
+	function showPage(pageIndex: number) {
+		const start = (pageIndex - 1) * itemsPerPage;
+		const end = start + itemsPerPage;
+  
+		allItems.forEach((el, idx) => {
+			(el as HTMLElement).style.display = (idx >= start && idx < end) ? '' : 'none';
+		});
+  
+		const pagerButtons = document.querySelectorAll(`.${pagerClassName} button`);
+		pagerButtons.forEach(btn => {
+			const btnPage = parseInt(btn.getAttribute('data-page') ?? '1', 10);
+			if (btnPage === pageIndex) {
+				btn.classList.add('bg-openpayd-purple', 'text-white');
+			} else {
+				btn.classList.remove('bg-openpayd-purple', 'text-white');
+			}
+		});
+	}
+  
+	const pagerContainer = document.createElement('div');
+	pagerContainer.className = pagerClassName + ' flex justify-center space-x-2 mt-6'; 
+  
+	for (let i = 1; i <= totalPages; i++) {
+		const btn = document.createElement('button');
+		btn.textContent = i.toString();
+		btn.setAttribute('data-page', i.toString());
+		btn.className = 'px-3 py-1 border border-gray-300 rounded transition hover:bg-gray-100';
+		
+		if (i === 1) {
+			btn.classList.add('bg-openpayd-purple', 'text-white');
+		}
+  
+		btn.addEventListener('click', function() {
+			const pageNum = parseInt(this.getAttribute('data-page') ?? '1', 10);
+			showPage(pageNum);
+		});
+  
+		pagerContainer.appendChild(btn);
+	}
+  
+	const pagerRoot = document.querySelector(pagerContainerSelector);
+	if (pagerRoot) {
+		pagerRoot.parentNode?.insertBefore(pagerContainer, pagerRoot.nextSibling);
+	}
+  
+	showPage(1);
+}); 

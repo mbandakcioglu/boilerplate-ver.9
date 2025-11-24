@@ -1,11 +1,12 @@
-header.header
-	.container.flex.place-content-between.m-auto.w-full.max-w-5xl
-		.header__logo.w-50
-			include ../../assets/img/header/vite.svg
+header.header(class="bg-brand-primary")
+	.container.flex.justify-between.items-center.py-5(class="max-w-[" + siteWidth + "] m-auto")
+		.header__logo.size-25
+			include ../../images/header/vite.svg
 		.header__menu
-			a.header__item(href="/") Home
-			a.header__item(href="/about") About
-			a.header__item(href="/contact") Contact
+			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/") Home
+			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/about") About
+			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/contact") Contact
+			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/about/company") Company
 
 
 

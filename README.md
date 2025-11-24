@@ -1,58 +1,47 @@
-# Vite + Pug + Sass boilerplate
+# WordPress-ready Vite + Pug + Tailwind Boilerplate
 
 Base: https://github.com/danyalll1/Vite-Pug-boilerplate/tree/main
 
-## Project setup
+Modern asset pipeline for WordPress-friendly themes (or static exports) using Vite 5, Vituum Pug routing, Tailwind CSS 4, and an optimized post-build step that reshapes `dist/` for pretty URLs and WebP-first images.
+
+## Features
+- Vite dev server with Vituum `pages` plugin for multi-page Pug under `src/pug/pages`.
+- Tailwind CSS 4 via `@tailwindcss/postcss` with tokens defined in `src/styles/global.css`.
+- Image optimization (`@vheemstra/vite-plugin-imagemin`) plus WebP variants handled in `postbuild.js`.
+- WordPress mode emits assets to `wp-content/themes/<projectName>/assets/...` when configured in `vite.config.js`.
+- Clean HTML output reorganized into folder-based routes for WordPress-friendly URLs.
+
+## Prerequisites
+- Node.js 18+ recommended
+- npm
+
+## Getting Started
+Install dependencies:
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Run the dev server at `localhost:8000`:
 ```
 npm run dev
 ```
 
-### Compiles and minifies for production
+Build for production (includes post-build rewriter):
 ```
 npm run build
 ```
 
-### Check compiled and minifies production version
-```
-npm run build
-```
+## Project Structure
+- `src/pug/layouts/layout.pug` — base layout injecting `/src/styles/app.css` and `/src/scripts/app.js`.
+- `src/pug/pages/**` — page entries; define metadata in `block variables` and extend the layout.
+- `src/pug/includes|components|mixins` — shared fragments.
+- `src/scripts/app.js` — JS entry that imports component modules.
+- `src/styles/app.css` — Tailwind import and global styles; component/page overrides live in `src/styles/components|pages`.
+- Assets referenced in Pug should start with `/src/...` (e.g., `/src/images` or `/src/assets`).
 
-### Src and hrefs
-  All src and hrefs(like images, scripts and styles) in .pug files must begining from /src ...
+## Build Notes
+- `postbuild.js` rewrites image references to WebP where available and reshapes HTML into folder-based routes to match WordPress-friendly structures.
+- When `projectType` in `vite.config.js` is set to `"wordpress"`, emitted assets target `/wp-content/themes/<projectName>/assets/{scripts,styles,img,fonts}`.
 
-### scripts and css
-  You can import all scripts in /src/scripts/app.js and call it in your layout.pug
-  layout.pug :
-  ```
- html(lang="ru")
-  head
-    link(rel="stylesheet" href="/src/styles/app.sass")
-    script(type='module' src="/src/scripts/app.js")
-  ```
-### svg and images
-
-Your pug file:
-```
-#svg
-header.header
-    .container
-        .header__container
-            .header__top
-                |copyright
-            .header__bottom
-                .header__logo
-                    include ../../../assets/img/header/vite.svg  <----svg 
-
-
-#image
-section.top
-    .container
-        h1.section-title Vituum + Pug Template
-        .top__content
-            img(src="/src/assets/img/top/Vituum.png")
-```
+## TODO
+- Selected JS files should be copied to `dist/` without being bundled into the `app.js` build.

@@ -7,9 +7,10 @@ html(lang="tr")
 		link(rel="stylesheet" href="/src/styles/app.css")
 		script(type='module' src="/src/scripts/app.js")
 		include ../includes/head
-	body.theme-light
+	body.theme-light(class="flex flex-col h-screen")
+
 		include  ../includes/header
-	main.main.m-auto(class="solutions w-full max-w-1/3")
-		block content
+		main.main.m-auto(class="solutions w-full flex-grow")
+			block content
 		include ../includes/footer
 

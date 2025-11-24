@@ -84,6 +84,7 @@ export default defineConfig(({ command }) => ({
 	},
 	build: {
 		minify: true,
+		assetsInlineLimit: 0, // SVG'lerin ve diğer küçük asset'lerin inline edilmesini engellemek için limiti 0 yapın.
 		rollupOptions: {
 			input: [
 				"./src/pug/pages/*.{pug,html}",

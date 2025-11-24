@@ -1,18 +1,19 @@
 extends  ../layouts/layout
 
-block title
-	| SiteTitle
+
 
 block content
-	h1 Contact
-	form(action="")
-		div 
-			label Name
-			input(type="text") 
-		div 
-			label Surname 
-			input(type="text")
-		div 
-			button(type="submit") Yallah
-	include ../sections/text
+	section
+		.container.py-5(class="max-w-[" + siteWidth + "] m-auto")
+			h1 Contact
+			form(action="")
+				div 
+					label Name
+					input(type="text") 
+				div 
+					label Surname 
+					input(type="text")
+				div 
+					button(type="submit") Yallah
+
 

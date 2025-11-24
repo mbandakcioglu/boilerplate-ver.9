@@ -1,31 +1,16 @@
 extends  ../layouts/layout
 
-block title
-    | SiteTitle
+block variables
+	-var pageType = "header-dark-mobile"
+	-var pageTitle = "Accept Payments"
+	//- SEO
+	-var desc = "Accept Payments"
+	-var keywords = "Home,Page"
+	-var pageRole = "home"
+
 
 block content
-    include ../sections/top
-    .embla
-        .embla__viewport
-            .embla__container
-                .embla__slide
-                    .embla__slide__number 1
-                .embla__slide
-                    .embla__slide__number 2
-                .embla__slide
-                    .embla__slide__number 3
-                .embla__slide
-                    .embla__slide__number 4
-                .embla__slide
-                    .embla__slide__number 5
-        .embla__controls
-            .embla__buttons
-                button.embla__button.embla__button--prev(type='button')
-                    svg.embla__button__svg(viewBox='0 0 532 532')
-                        path(fill='currentColor', d='M355.66 11.354c13.793-13.805 36.208-13.805 50.001 0 13.785 13.804 13.785 36.238 0 50.034L201.22 266l204.442 204.61c13.785 13.805 13.785 36.239 0 50.044-13.793 13.796-36.208 13.796-50.002 0a5994246.277 5994246.277 0 0 0-229.332-229.454 35.065 35.065 0 0 1-10.326-25.126c0-9.2 3.393-18.26 10.326-25.2C172.192 194.973 332.731 34.31 355.66 11.354Z')
-                button.embla__button.embla__button--next(type='button')
-                    svg.embla__button__svg(viewBox='0 0 532 532')
-                        path(fill='currentColor', d='M176.34 520.646c-13.793 13.805-36.208 13.805-50.001 0-13.785-13.804-13.785-36.238 0-50.034L330.78 266 126.34 61.391c-13.785-13.805-13.785-36.239 0-50.044 13.793-13.796 36.208-13.796 50.002 0 22.928 22.947 206.395 206.507 229.332 229.454a35.065 35.065 0 0 1 10.326 25.126c0 9.2-3.393 18.26-10.326 25.2-45.865 45.901-206.404 206.564-229.332 229.52Z')
-            .embla__dots
-    include ../sections/text
-
+	section
+		.container(class="max-w-[" + siteWidth + "] m-auto p-6 md:p-0 w-full ")
+			p Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus animi consequuntur similique ab doloremque et omnis nostrum amet temporibus! Placeat ut sint impedit officiis distinctio atque excepturi in rerum sequi.
+			p Lorem, ipsum dolor sit amet consectetur adipisicing elit. Et eum qui repellendus ipsa eligendi nostrum nobis cum fugiat iusto, adipisci dolorem beatae, minus odio expedita quis, labore impedit sunt debitis.

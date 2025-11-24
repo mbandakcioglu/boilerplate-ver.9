@@ -1,8 +1,31 @@
 # Derlenmiş/Paketlenmiş Çıktılar
 dist/
+.vite/
 
 # Node.js Bağımlılıkları
 node_modules/
 
 # Sadece Kök Dizindeki .zip Dosyaları
 /*.zip
+
+# Günlükler ve Geçici Dosyalar
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# IDE / OS Artıkları
+.DS_Store
+.idea/
+.vscode/
+
+# Ortam Dosyaları
+.env
+.env.*
+!.env.example
+
+# Test Çıktıları
+coverage/
+
+# Sertifika/Anahtar
+*.pem
