@@ -42,6 +42,12 @@ npm run build
 ## Build Notes
 - `postbuild.js` rewrites image references to WebP where available and reshapes HTML into folder-based routes to match WordPress-friendly structures.
 - When `projectType` in `vite.config.js` is set to `"wordpress"`, emitted assets target `/wp-content/themes/<projectName>/assets/{scripts,styles,img,fonts}`.
+- A custom copy pipeline watches two lists in `vite.config.js`: `standaloneScripts` and `standaloneStyles`. Any `/src/...` script or stylesheet added there is copied verbatim into `dist/<assets>/scripts|styles/` without getting bundled, and the helper plugins transparently rewrite the generated HTML so the `<script>`/`<link>` tags point at the WordPress-friendly paths.
+
+## Standalone Assets
+- Add page-specific JS files to `standaloneScripts` and keep invoking them in Pug via `script(src="/src/...")`. During the build the file is copied into `dist/.../scripts/` and `<script>` tags are rewritten to load the copied file (module attributes stripped so Vite ignores it).
+- Do the same for one-off stylesheets with `standaloneStyles` and `link(rel="stylesheet" href="/src/...")`.
+- Keep `/src/...` paths in your templates to ensure the dev server loads the source file before build-time rewriting takes over.
 
 ## TODO
-- Selected JS files should be copied to `dist/` without being bundled into the `app.js` build.
+- Document the default WordPress theme slug and enqueue strategy you use.
