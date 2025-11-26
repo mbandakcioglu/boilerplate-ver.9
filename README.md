@@ -49,5 +49,4 @@ npm run build
 - Do the same for one-off stylesheets with `standaloneStyles` and `link(rel="stylesheet" href="/src/...")`.
 - Keep `/src/...` paths in your templates to ensure the dev server loads the source file before build-time rewriting takes over.
 
-## TODO
-- Document the default WordPress theme slug and enqueue strategy you use.
+
