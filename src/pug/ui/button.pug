@@ -1,0 +1,56 @@
+
+mixin buttonGeneral(text, options = {})
+	-
+		const {
+			href = null,
+			variant = "blue", // blue | green | white
+			extraClass = "",
+			icon = null,
+			iconPos= "left",
+			attrs = {}
+		} = options;
+
+		const baseClass = "inline-flex items-center gap-[10px] h-[55px] px-[21px] text-[17px]  rounded-full rounded-[50px] group transition-all lg:text-[14px] 2xl:text-[17px]";
+
+		const variants = {
+			blue: "bg-blue hover:bg-white text-white hover:text-blue hover:shadow-[inset_0px_0px_2px_0px_#273d89]",
+			green: "bg-green hover:bg-white text-white hover:text-green hover:shadow-[inset_0px_0px_2px_0px_#a8b95e]",
+			white: "bg-white hover:bg-[#273d89] text-black hover:text-white rounded-full border border-[#acb1c6]",
+			red: "bg-red hover:bg-white text-white hover:text-red hover:shadow-[inset_0px_0px_2px_0px_#db0d15]",
+			// new variants
+			// danger: "bg-red-600 text-white",
+			// outline: "border border-gray-400 text-gray-700 bg-transparent",
+		};
+
+		const variantClass = variants[variant] || variants.blue;
+
+
+	if href
+		a(
+			href="javascript:;"
+			class=`${baseClass} ${variantClass} ${extraClass}`
+			
+		)
+			if icon && (iconPos === "left" || !iconPos)
+				span.icon!= icon
+			if text
+				span.text= text
+			if icon &&(iconPos === "right")
+				span.icon!= icon
+
+	else
+		button(type="button" class=`${baseClass} ${variantClass} ${extraClass}`)&attributes(attrs)
+			if icon && (iconPos === "left" || !iconPos)
+				span.icon!= icon
+			if text
+				span.text= text
+			if icon &&(iconPos === "right")
+				span.icon!= icon
+
+//- usage
+	+buttonGeneral("Dergiyi Görüntüle", {
+		href: "javascript:;",
+		variant: "blue",
+		iconPos: "right",
+		icon: `...`
+	})

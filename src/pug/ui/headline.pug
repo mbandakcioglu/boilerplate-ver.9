@@ -1,0 +1,13 @@
+mixin headline(text, options = {})
+	-
+		const {
+			extraClass = "",
+			tag = "h2"
+		} = options;
+		const baseClass = "text-[#273D89] text-[28px] font-bold"
+		
+
+	#{tag}(class=`${baseClass} ${extraClass}`)= text
+
+//- usage
+	+headline("Teknoloji ve Dijital Dergisi", {tag: "h3", extraClass:"!text-[20px] text-left text-[#112053]"})
