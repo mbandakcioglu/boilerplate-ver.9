@@ -48,7 +48,7 @@ This is a modern frontend boilerplate built with Vite, Vituum, Pug, and Tailwind
 
 1.  Clone the repository:
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/mbandakcioglu/boilerplate-ver.9.git
     ```
 2.  Navigate to the project directory:
     ```bash
