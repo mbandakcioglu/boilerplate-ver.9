@@ -16,21 +16,21 @@ import imageminWebp from "imagemin-webp";
 import tailwindcss from "@tailwindcss/vite";
 
 
-// Proje ayarları
+// Project settings
 const projectSetup = {
-	projectName: "my-theme", // WordPress tema adı veya HTML projesi adı
-	projectType: "wordpress", // "html" veya "wordpress"
+	projectName: "my-theme", // WordPress theme name or HTML project name
+	projectType: "wordpress", // "html" or "wordpress"
 };
 
-// app.js dışında, bundle'a eklenmeden dist'e kopyalanacak script dosyaları
+// Script files to be copied to dist without being bundled, besides app.js
 const standaloneScripts = [
-	// ör: "src/scripts/slider.js",
+	// e.g., "src/scripts/slider.js",
 	"src/scripts/standalone-example.js",
 ];
 
-// app.css dışında, bundle'a eklenmeden dist'e kopyalanacak css dosyaları
+// Style files to be copied to dist without being bundled, besides app.css
 const standaloneStyles = [
-	// ör: "src/styles/pages/contact.css",
+	// e.g., "src/styles/pages/contact.css",
 	"src/styles/standalone-example.css"
 ];
 
@@ -42,6 +42,10 @@ const assetsPath =
 const removeLeadingSlash = (str) => str.replace(/^\/+/, "");
 const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+/**
+ * Vite plugin to copy standalone script files from `src` to the final `dist` directory.
+ * These scripts are not processed or bundled by Vite.
+ */
 const copyStandaloneScripts = () => ({
 	name: "copy-standalone-scripts",
 	apply: "build",
@@ -64,6 +68,10 @@ const copyStandaloneScripts = () => ({
 	},
 });
 
+/**
+ * Vite plugin to copy standalone style files from `src` to the final `dist` directory.
+ * These stylesheets are not processed or bundled by Vite.
+ */
 const copyStandaloneStyles = () => ({
 	name: "copy-standalone-styles",
 	apply: "build",
@@ -86,6 +94,11 @@ const copyStandaloneStyles = () => ({
 	},
 });
 
+/**
+ * Vite plugin to rewrite <script> tags for standalone scripts in the final HTML.
+ * It changes the `src` attribute from the development path (e.g., /src/scripts/...)
+ * to the production path (e.g., /assets/scripts/...) and removes the `type="module"` attribute.
+ */
 const rewriteStandaloneScripts = () => {
 	let isBuild = false;
 
@@ -114,7 +127,7 @@ const rewriteStandaloneScripts = () => {
 				);
 
 				transformed = transformed.replace(scriptRegex, (_match, pre, post) => {
-					// type="module" vb. derlemeyi tetikleyen attribute'ları kaldırıyoruz
+					// We remove attributes that trigger bundling, like type="module"
 					const cleaned = `${pre} ${post}`.replace(/\s*type=["']module["']/gi, "");
 					return `<script${cleaned} src="${outSrc}"></script>`;
 				});
@@ -125,6 +138,11 @@ const rewriteStandaloneScripts = () => {
 	};
 };
 
+/**
+ * Vite plugin to rewrite <link> tags for standalone stylesheets in the final HTML.
+ * It changes the `href` attribute from the development path (e.g., /src/styles/...)
+ * to the production path (e.g., /assets/styles/...).
+ */
 const rewriteStandaloneStyles = () => {
 	let isBuild = false;
 
@@ -162,6 +180,75 @@ const rewriteStandaloneStyles = () => {
 	};
 };
 
+/**
+ * Vite plugin for the preview server to mimic "pretty URL" behavior.
+ * It redirects requests from `/about` to `/about/` to match the post-build structure.
+ */
+const previewTrailingSlashRedirect = () => ({
+	name: "preview-trailing-slash-redirect",
+	configurePreviewServer(server) {
+		const redirectToTrailingSlash = (req, res, next) => {
+			const originalUrl = req.url || "/";
+
+			// Separate query string (e.g., /about?x=1)
+			const qIndex = originalUrl.indexOf("?");
+			const pathname = qIndex >= 0 ? originalUrl.slice(0, qIndex) : originalUrl;
+			const query = qIndex >= 0 ? originalUrl.slice(qIndex) : "";
+
+			// Skip root and asset requests (paths with extensions)
+			if (pathname === "/" || pathname.includes(".")) return next();
+
+			// /about -> /about/ (let the browser do a real reload)
+			if (!pathname.endsWith("/")) {
+				res.statusCode = 308;
+				res.setHeader("Location", `${pathname}/${query}`);
+				return res.end();
+			}
+
+			return next();
+		};
+
+		// Try to add to the beginning of the stack to run before Vite's preview fallback
+		if (Array.isArray(server.middlewares?.stack)) {
+			server.middlewares.stack.unshift({ route: "", handle: redirectToTrailingSlash });
+		} else {
+			server.middlewares.use(redirectToTrailingSlash);
+		}
+	},
+});
+
+/**
+ * Vite plugin for the dev server to handle trailing slashes.
+ * Vituum pages work without trailing slashes (e.g., /about), so this redirects
+ * requests from `/about/` to `/about` to maintain consistency during development.
+ */
+const devStripTrailingSlashRedirect = () => ({
+	name: "dev-strip-trailing-slash-redirect",
+	apply: "serve",
+	configureServer(server) {
+		server.middlewares.use((req, res, next) => {
+			const originalUrl = req.url || "/";
+
+			// Separate query string (e.g., /about/?x=1)
+			const qIndex = originalUrl.indexOf("?");
+			const pathname = qIndex >= 0 ? originalUrl.slice(0, qIndex) : originalUrl;
+			const query = qIndex >= 0 ? originalUrl.slice(qIndex) : "";
+
+			// Skip root and asset requests
+			if (pathname === "/" || pathname.includes(".")) return next();
+
+			// In dev, Vituum pages usually work without a slash (e.g., /about). Redirect /about/ -> /about.
+			if (pathname.endsWith("/")) {
+				res.statusCode = 308;
+				res.setHeader("Location", `${pathname.slice(0, -1)}${query}`);
+				return res.end();
+			}
+
+			return next();
+		});
+	},
+});
+
 export default defineConfig(({ command }) => ({
 	resolve: {
 		alias: {
@@ -181,6 +268,10 @@ export default defineConfig(({ command }) => ({
 			dir: "./src/pug/pages",
 			root: "./src",
 			normalizeBasePath: true,
+			// Convert underscores (_) in filenames to URL path separators (/)
+			filename: (file) => {
+				return file.name.replace(/_/g, '/') + '/index'; // Add /index for consistency between dev and build
+			},
 		}),
         viteImagemin({
             plugins: {
@@ -198,6 +289,8 @@ export default defineConfig(({ command }) => ({
 		rewriteStandaloneScripts(),
 		copyStandaloneStyles(),
 		copyStandaloneScripts(),
+		// devStripTrailingSlashRedirect(), // Disabled due to potential conflict with subdirectory structure.
+		previewTrailingSlashRedirect(),
 	].filter(Boolean),
 	assets: {
 		fileExtensions: [
@@ -223,10 +316,10 @@ export default defineConfig(({ command }) => ({
 	},
 	build: {
 		minify: true,
-		assetsInlineLimit: 0, // SVG'lerin ve diğer küçük asset'lerin inline edilmesini engellemek için limiti 0 yapın.
+		assetsInlineLimit: 0, // Set to 0 to prevent inlining of SVGs and other small assets.
 		rollupOptions: {
 			input: [
-				"./src/pug/pages/*.{pug,html}",
+				"./src/pug/pages/**/*.{pug,html}",
 				"./src/styles/*.css",
 				"./src/scripts/app.js",
 				'./src/assets/**/*.{svg,png,jpeg,jpg,webp,webm,mp4,mp3,webp,webm,woof,woof2,ttf}',

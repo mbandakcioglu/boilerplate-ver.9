@@ -1,19 +1,22 @@
 import { readdir, rename, stat, mkdir, readFile, writeFile } from "fs/promises";
 import path from "node:path";
 
+// Recursively processes HTML files to create "pretty URLs".
+// e.g., about.html -> about/index.html
 async function cleanHtmlUrls(dir) {
 	const files = await readdir(dir);
 	for (const file of files) {
 		const fullPath = path.join(dir, file);
 		const fileStat = await stat(fullPath);
 		if (fileStat.isDirectory()) {
+			// Recurse into subdirectories.
 			await cleanHtmlUrls(fullPath);
 		} else if (file.endsWith(".html") && file !== "index.html") {
-			// Dosya adındaki .html kısmını kaldırarak yeni klasör adı oluşturuyoruz.
+			// Create a new directory name by removing the .html extension.
 			const newDirName = file.replace(/\.html$/, "");
 			const newDirPath = path.join(dir, newDirName);
 			await mkdir(newDirPath, { recursive: true });
-			// Dosyayı yeni dizinde index.html olarak taşıyoruz.
+			// Move the file as index.html into the new directory.
 			const newFilePath = path.join(newDirPath, "index.html");
 			await rename(fullPath, newFilePath);
 			console.log(`Moved ${file} -> ${newDirName}/index.html`);
@@ -21,17 +24,18 @@ async function cleanHtmlUrls(dir) {
 	}
 }
 
-// Tek bir renameWebpFiles fonksiyonu tanımlıyoruz:
+// Recursively renames image files that have double extensions like .png.webp or .jpg.webp to just .webp.
+// This is often a side-effect of image optimization plugins.
 async function renameWebpFiles(dir) {
 	const items = await readdir(dir);
 	for (const item of items) {
 		const fullPath = path.join(dir, item);
 		const itemStats = await stat(fullPath);
 		if (itemStats.isDirectory()) {
-			// Alt dizinlere de gir
+			// Recurse into subdirectories.
 			await renameWebpFiles(fullPath);
 		} else {
-			// Eğer dosya adı .png.webp veya .jpg.webp ile bitiyorsa, dosya adını yeniden düzenle
+			// If the file ends with .png.webp or .jpg.webp, rename it.
 			if (/\.(png|jpe?g)\.webp$/i.test(item)) {
 				const newFileName = item.replace(/\.(png|jpe?g)\.webp$/i, ".webp");
 				const newFullPath = path.join(dir, newFileName);
@@ -42,17 +46,18 @@ async function renameWebpFiles(dir) {
 	}
 }
 
-// HTML dosyalarını recursive olarak işleyip görsel referanslarını güncelleyen fonksiyon
+// Recursively processes HTML files to update image references from .png/.jpg to .webp.
 async function rewriteImageRefs(dir) {
 	const items = await readdir(dir);
 	for (const item of items) {
 	  const fullPath = path.join(dir, item);
 	  const itemStats = await stat(fullPath);
 	  if (itemStats.isDirectory()) {
+		// Recurse into subdirectories.
 		await rewriteImageRefs(fullPath);
 	  } else if (item.endsWith(".html")) {
 		let content = await readFile(fullPath, "utf8");
-		// İmaj referanslarında hem absolute hem relative yolları ("/assets/img/..." veya "../assets/img/...") yakalıyoruz
+		// Capture both absolute and relative image paths (e.g., "/assets/img/..." or "../assets/img/...")
 		content = content.replace(/((?:\.\.\/|\/)?assets\/img\/[^"'\s>]+)\.(png|jpe?g)(?=["'\s>])/gi, "$1.webp");
 		await writeFile(fullPath, content, "utf8");
 		console.log(`Updated image refs in ${fullPath}`);

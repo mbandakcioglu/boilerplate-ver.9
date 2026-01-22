@@ -2,4 +2,7 @@
 import test from "./test";
 
 
-test();
+document.addEventListener("DOMContentLoaded", () => {
+	test();
+
+});

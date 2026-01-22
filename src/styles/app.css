@@ -22,3 +22,6 @@ header.header {
     }
 }
 
+.container {
+	@apply max-w-[1300px] m-auto;
+}
