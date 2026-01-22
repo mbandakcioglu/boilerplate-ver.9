@@ -1,10 +1,15 @@
 extends  ../../layouts/layout
 
+block variables
+	-var pageTitle = "Company"
+	//- SEO
+	-var desc = "Company"
+	-var keywords = "Company,Page"
 
 block content
 	section
 		.container(class="text-center")
-			+headline("Company", {extraClass:"text-center"})
+			+headline(pageTitle, {extraClass:"text-center"})
 			div(class="flex gap-5")
 				+headline("Adress", {tag: "h2", extraClass:"text-lg text-center"})
 				p Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex suscipit iure illum, nemo voluptates similique facere quasi cumque asperiores quisquam repudiandae consequuntur animi expedita sequi recusandae, nobis nihil rerum. Reprehenderit.

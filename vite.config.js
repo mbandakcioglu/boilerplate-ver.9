@@ -11,10 +11,10 @@ import viteImagemin from "@vheemstra/vite-plugin-imagemin";
 
 // The minifiers you want to use:
 import imageminMozjpeg from "imagemin-mozjpeg";
-import imageminPngquant from 'imagemin-pngquant';
+import imageminPngquant from "imagemin-pngquant";
 import imageminWebp from "imagemin-webp";
-import tailwindcss from "@tailwindcss/vite";
 
+import tailwindcss from "@tailwindcss/vite";
 
 // Project settings
 const projectSetup = {
@@ -31,7 +31,7 @@ const standaloneScripts = [
 // Style files to be copied to dist without being bundled, besides app.css
 const standaloneStyles = [
 	// e.g., "src/styles/pages/contact.css",
-	"src/styles/standalone-example.css"
+	"src/styles/standalone-example.css",
 ];
 
 const assetsPath =
@@ -54,7 +54,7 @@ const copyStandaloneScripts = () => ({
 		const outDir = path.resolve(
 			"dist",
 			removeLeadingSlash(assetsPath),
-			"scripts"
+			"scripts",
 		);
 		await mkdir(outDir, { recursive: true });
 
@@ -80,7 +80,7 @@ const copyStandaloneStyles = () => ({
 		const outDir = path.resolve(
 			"dist",
 			removeLeadingSlash(assetsPath),
-			"styles"
+			"styles",
 		);
 		await mkdir(outDir, { recursive: true });
 
@@ -123,12 +123,15 @@ const rewriteStandaloneScripts = () => {
 
 				const scriptRegex = new RegExp(
 					`<script([^>]*?)\\s+src=["']${escapeRegExp(devSrc)}["']([^>]*)><\\/script>`,
-					"gi"
+					"gi",
 				);
 
 				transformed = transformed.replace(scriptRegex, (_match, pre, post) => {
 					// We remove attributes that trigger bundling, like type="module"
-					const cleaned = `${pre} ${post}`.replace(/\s*type=["']module["']/gi, "");
+					const cleaned = `${pre} ${post}`.replace(
+						/\s*type=["']module["']/gi,
+						"",
+					);
 					return `<script${cleaned} src="${outSrc}"></script>`;
 				});
 			}
@@ -167,7 +170,7 @@ const rewriteStandaloneStyles = () => {
 
 				const linkRegex = new RegExp(
 					`<link([^>]*?)\\s+href=["']${escapeRegExp(devHref)}["']([^>]*)>`,
-					"gi"
+					"gi",
 				);
 
 				transformed = transformed.replace(linkRegex, (_match, pre, post) => {
@@ -210,7 +213,10 @@ const previewTrailingSlashRedirect = () => ({
 
 		// Try to add to the beginning of the stack to run before Vite's preview fallback
 		if (Array.isArray(server.middlewares?.stack)) {
-			server.middlewares.stack.unshift({ route: "", handle: redirectToTrailingSlash });
+			server.middlewares.stack.unshift({
+				route: "",
+				handle: redirectToTrailingSlash,
+			});
 		} else {
 			server.middlewares.use(redirectToTrailingSlash);
 		}
@@ -249,6 +255,38 @@ const devStripTrailingSlashRedirect = () => ({
 	},
 });
 
+/**
+ * A robust custom plugin to fix the Vite error overlay.
+ * This plugin intercepts error messages sent over the WebSocket and sanitizes them.
+ * It ensures that essential properties (`message`, `stack`, `frame`) are always valid strings,
+ * preventing the overlay from crashing with a "Cannot read properties of null" error,
+ * which is a known issue when using certain plugins like Vituum that can malform error objects.
+ */
+const fixErrorOverlay = () => ({
+	name: "fix-vite-error-overlay-robust",
+	apply: "serve",
+	configureServer(server) {
+		const originalSend = server.ws.send;
+		server.ws.send = (payload) => {
+			if (payload.type === "error" && payload.err) {
+				const { err } = payload;
+
+				// Ensure essential properties are valid strings to prevent client-side crashes.
+				if (!err.message) {
+					err.message = "An unknown error occurred. Check the terminal for details.";
+				}
+				if (!err.stack) {
+					err.stack = "Stack trace is not available.";
+				}
+				if (!err.frame) {
+					err.frame = `(Error frame not available for file: ${err.id || 'unknown file'})`;
+				}
+			}
+			originalSend(payload);
+		};
+	},
+});
+
 export default defineConfig(({ command }) => ({
 	resolve: {
 		alias: {
@@ -257,34 +295,27 @@ export default defineConfig(({ command }) => ({
 	},
 	base: command === "build" ? "/" : "./",
 	plugins: [
+		fixErrorOverlay(), // Add our custom fix plugin at the very top.
 		vituum(),
-        tailwindcss(),
+		tailwindcss(),
 		pug({ root: "/src" }),
-		imports({
-			filenamePattern: { "src/styles": "+.css" },
-			paths: ["/src/styles/*/**", "/src/scripts/*/**", "/src/assets/*/**"],
-		}),
+		imports({ paths: ["/src/styles/*/**", "/src/scripts/*/**", "/src/assets/*/**"] }),
 		pages({
 			dir: "./src/pug/pages",
 			root: "./src",
-			normalizeBasePath: true,
-			// Convert underscores (_) in filenames to URL path separators (/)
-			filename: (file) => {
-				return file.name.replace(/_/g, '/') + '/index'; // Add /index for consistency between dev and build
+		}),
+		viteImagemin({
+			plugins: {
+				jpg: imageminMozjpeg(),
+				png: imageminPngquant(),
+			},
+			makeWebp: {
+				plugins: {
+					jpg: imageminWebp({ quality: 85 }),
+					png: imageminWebp({ quality: 85 }),
+				},
 			},
 		}),
-        viteImagemin({
-            plugins: {
-              jpg: imageminMozjpeg(),
-              png: imageminPngquant(),
-            },
-            makeWebp: {
-              plugins: {
-                jpg: imageminWebp({ quality: 85 }),
-                png: imageminWebp({ quality: 85 }),
-              },
-            },
-        }),
 		rewriteStandaloneStyles(),
 		rewriteStandaloneScripts(),
 		copyStandaloneStyles(),
@@ -322,7 +353,7 @@ export default defineConfig(({ command }) => ({
 				"./src/pug/pages/**/*.{pug,html}",
 				"./src/styles/*.css",
 				"./src/scripts/app.js",
-				'./src/assets/**/*.{svg,png,jpeg,jpg,webp,webm,mp4,mp3,webp,webm,woof,woof2,ttf}',
+				"./src/assets/**/*.{svg,png,jpeg,jpg,webp,webm,mp4,mp3,webp,webm,woof,woof2,ttf}",
 			],
 			output: {
 				entryFileNames: `${removeLeadingSlash(assetsPath)}/scripts/[name].js`,
@@ -342,5 +373,14 @@ export default defineConfig(({ command }) => ({
 				// manualChunks: () => "app",
 			},
 		},
+	},
+	server: {
+		// HMR hata katmanının etkin olduğundan emin olun.
+		// Varsayılan olarak 'true'dur, ancak daha önce devre dışı bırakıldıysa
+		// bu şekilde açıkça ayarlayabilirsiniz.
+		hmr: { overlay: true },
+		watch: {
+			usePolling: true,
+		}
 	},
 }));

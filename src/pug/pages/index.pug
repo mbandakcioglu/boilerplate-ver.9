@@ -1,18 +1,16 @@
 extends  ../layouts/layout
 
 block variables
-	-var pageType = "header-dark-mobile"
-	-var pageTitle = "Accept Payments"
+	-var pageTitle = "Home"
 	//- SEO
-	-var desc = "Accept Payments"
+	-var desc = "Home"
 	-var keywords = "Home,Page"
-	-var pageRole = "home"
 
 
 block content
 	section
 		.container(class="")
-			+headline("Home", {extraClass:"text-center my-20"})
+			+headline(pageTitle, {extraClass:"text-center my-20"})
 			div(class="flex")
 				p Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus animi consequuntur similique ab doloremque et omnis nostrum amet temporibus! Placeat ut sint impedit officiis distinctio atque excepturi in rerum sequi.
 				p Lorem, ipsum dolor sit amet consectetur adipisicing elit. Et eum qui repellendus ipsa eligendi nostrum nobis cum fugiat iusto, adipisci dolorem beatae, minus odio expedita quis, labore impedit sunt debitis.

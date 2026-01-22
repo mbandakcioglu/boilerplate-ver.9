@@ -1,12 +1,12 @@
 header.header(class="bg-brand-primary")
-	.container.flex.justify-between.items-center.py-5(class="max-w-[" + siteWidth + "] m-auto")
+	//- Tailwind'in JIT derleyicisinin çalışması için `max-w` sınıfı statik olmalıdır.
+	.container.flex.justify-between.items-center.py-5(class="max-w-screen-xl mx-auto")
 		.header__logo.size-25
-			include ../../images/header/vite.svg
+			a(class="", href="/") 
+				include ../../images/header/vite.svg
 		.header__menu
 			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/") Home
 			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/about") About
 			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/about/company") Company
 
 			a.header__item(class="leading-7 text-white hover:text-amber-100 hover:underline font-bold text-xl tracking-wider", href="/contact") Contact
-
-

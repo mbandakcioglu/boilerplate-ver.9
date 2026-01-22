@@ -1,9 +1,15 @@
 extends  ../layouts/layout
 
+block variables
+	-var pageTitle = "About"
+	//- SEO
+	-var desc = "About"
+	-var keywords = "About,Page"
+
 block content
 	section
 		.container(class="text-center")
-			+headline("About", {extraClass:"text-center"})
+			+headline(pageTitle, {extraClass:"text-center"})
 			div
 				img(class="inline-block size-1/2", src="/src/images/1000_F_797828697_g7uQt2DKyTXSc37Tx6txU5GT402EnKv4.jpg", alt="robot")
 

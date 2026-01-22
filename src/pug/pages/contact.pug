@@ -1,10 +1,9 @@
 extends  ../layouts/layout
 
 block variables
-	-var pageType = "header-dark-mobile"
-	-var pageTitle = "Accept Payments"
+	-var pageTitle = "Contact"
 	//- SEO
-	-var desc = "Accept Payments"
+	-var desc = "Contact"
 	-var keywords = "Home,Page"
 	-var pageRole = "home"
 
@@ -12,7 +11,7 @@ block content
 	link(rel="stylesheet", href="src/styles/standalone-example.css")
 	section
 		.container.py-5(class="max-w-[" + siteWidth + "] m-auto")
-			+headline("Contact", {extraClass:"text-center"})
+			+headline(pageTitle, {extraClass:"text-center"})
 			form(action="")
 				div 
 					label Name
