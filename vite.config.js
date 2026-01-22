@@ -19,7 +19,7 @@ import tailwindcss from "@tailwindcss/vite";
 // Project settings
 const projectSetup = {
 	projectName: "my-theme", // WordPress theme name or HTML project name
-	projectType: "wordpress", // "html" or "wordpress"
+	projectType: "html", // "html" or "wordpress"
 };
 
 // Script files to be copied to dist without being bundled, besides app.js

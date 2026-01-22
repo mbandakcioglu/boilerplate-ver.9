@@ -2,7 +2,8 @@ extends  ../layouts/layout
 
 block content
 	section
-		.container.flex.justify-between.items-center.py-5(class="max-w-[" + siteWidth + "] m-auto")
+		.container(class="text-center")
 			+headline("About", {extraClass:"text-center"})
-			img(class="size-1/2", src="/src/images/1000_F_797828697_g7uQt2DKyTXSc37Tx6txU5GT402EnKv4.jpg", alt="robot")
+			div
+				img(class="inline-block size-1/2", src="/src/images/1000_F_797828697_g7uQt2DKyTXSc37Tx6txU5GT402EnKv4.jpg", alt="robot")
 
