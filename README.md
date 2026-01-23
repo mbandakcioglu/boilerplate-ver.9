@@ -56,14 +56,14 @@ This is a modern frontend boilerplate built with Vite, Vituum, Pug, and Tailwind
     ```
 3.  Install dependencies:
     ```bash
-    pnpm install
+    npm install
     ```
 
 ### Available Scripts
 
--   `pnpm dev`: Starts the Vite development server with HMR.
--   `pnpm build`: Builds the project for production. This includes asset optimization and runs the `postbuild.js` script.
--   `pnpm preview`: Starts a local server to preview the production build from the `dist` directory.
+-   `npm dev`: Starts the Vite development server with HMR.
+-   `npm build`: Builds the project for production. This includes asset optimization and runs the `postbuild.js` script.
+-   `npm preview`: Starts a local server to preview the production build from the `dist` directory.
 
 ## ⚙️ Configuration
 
