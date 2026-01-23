@@ -25,7 +25,7 @@ This is a modern frontend boilerplate built with Vite, Vituum, Pug, and Tailwind
 │   │   ├── components/    # Reusable Pug components
 │   │   ├── layouts/       # Base Pug layouts
 │   │   └── pages/         # Site pages (e.g., index.pug, about.pug)
-│   │   └── ui/            # UI-related Pug files (e.g., style guide, pattern library)
+│   │   └── ui/            # UI-related Pug files (e.g., buttons, headline)
 │   ├── scripts/
 │   │   ├── app.js         # Main JS entry point (bundled)
 │   │   └── standalone-example.js # Example of a standalone script
